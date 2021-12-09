@@ -84,14 +84,16 @@ public class KafkaSource extends BaseConnector implements Source {
         if (pollCount > retry) {
           break;
         }
-      }
+      }else {
 
-      consumerRecords.forEach(record -> {
-        LOGGER.info("Consumer Record: key - {}, value - {}, partition - {}, offset - {}",
-            record.key(), record.value(), record.partition(), record.offset());
-        recordsList.add(record);
-      });
-      consumer.commitAsync();
+        consumerRecords.forEach(record -> {
+          LOGGER.info("Consumer Record: key - {}, value - {}, partition - {}, offset - {}",
+                  record.key(), record.value(), record.partition(), record.offset());
+          recordsList.add(record);
+        });
+        consumer.commitAsync();
+        break;
+      }
     }
     consumer.close();
     final Iterator<ConsumerRecord<String, JsonNode>> iterator = recordsList.iterator();
